@@ -15,9 +15,11 @@ export function useCreateAccount() {
   return useMutation({
     mutationFn: (data: {
       name: string;
-      account_type: string;
+      account_type: "wallet" | "bank" | "credit_card" | "investment";
       currency?: string;
       initial_balance?: number;
+      color?: string;
+      icon?: string;
     }) => apiClient.post<Account>("/accounts", data).then((r) => r.data),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["accounts"] });
