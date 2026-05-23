@@ -24,9 +24,11 @@ async fn main() -> anyhow::Result<()> {
 
     let db = infrastructure::db::create_pool().await?;
 
-    let jwt_secret = std::env::var("JWT_SECRET")
-        .map_err(|_| anyhow::anyhow!("JWT_SECRET must be set"))?;
-    let jwt_validator = Arc::new(infrastructure::auth::JwtValidator::new(&jwt_secret));
+    let supabase_url = std::env::var("SUPABASE_URL")
+        .map_err(|_| anyhow::anyhow!("SUPABASE_URL must be set"))?;
+    let jwt_validator = Arc::new(
+        infrastructure::auth::JwtValidator::from_supabase_url(&supabase_url).await?,
+    );
 
     let state = api::state::AppState { db, jwt_validator };
 

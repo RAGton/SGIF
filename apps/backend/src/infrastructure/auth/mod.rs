@@ -1,4 +1,5 @@
-use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
+use anyhow::Context;
+use jsonwebtoken::{decode, jwk::JwkSet, DecodingKey, Validation};
 use serde::Deserialize;
 use uuid::Uuid;
 
@@ -17,13 +18,42 @@ pub struct JwtValidator {
 }
 
 impl JwtValidator {
-    pub fn new(secret: &str) -> Self {
-        let mut validation = Validation::new(Algorithm::HS256);
+    pub async fn from_supabase_url(supabase_url: &str) -> anyhow::Result<Self> {
+        let jwks_url = format!("{}/auth/v1/.well-known/jwks.json", supabase_url);
+        let jwk_set: JwkSet = reqwest::get(&jwks_url)
+            .await
+            .context("failed to fetch JWKS")?
+            .json()
+            .await
+            .context("failed to parse JWKS")?;
+
+        let jwk = jwk_set
+            .keys
+            .into_iter()
+            .next()
+            .context("JWKS has no keys")?;
+
+        let alg = jwk
+            .common
+            .key_algorithm
+            .map(|ka| {
+                serde_json::from_value::<jsonwebtoken::Algorithm>(
+                    serde_json::Value::String(ka.to_string()),
+                )
+                .unwrap_or(jsonwebtoken::Algorithm::ES256)
+            })
+            .unwrap_or(jsonwebtoken::Algorithm::ES256);
+
+        let decoding_key =
+            DecodingKey::from_jwk(&jwk).context("failed to build DecodingKey from JWK")?;
+
+        let mut validation = Validation::new(alg);
         validation.set_audience(&["authenticated"]);
-        Self {
-            decoding_key: DecodingKey::from_secret(secret.as_bytes()),
+
+        Ok(Self {
+            decoding_key,
             validation,
-        }
+        })
     }
 
     pub fn validate(&self, token: &str) -> anyhow::Result<Uuid> {

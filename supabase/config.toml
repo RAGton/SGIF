@@ -26,6 +26,7 @@ site_url = "http://localhost:5173"
 additional_redirect_urls = ["https://localhost:5173"]
 jwt_expiry = 3600
 enable_signup = true
+jwt_secret = "super-secret-jwt-token-with-at-least-32-characters-long"
 
 [auth.email]
 enable_signup = true
