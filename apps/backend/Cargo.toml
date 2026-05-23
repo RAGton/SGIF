@@ -25,6 +25,7 @@ tracing-subscriber.workspace = true
 jsonwebtoken.workspace  = true
 validator.workspace     = true
 dotenvy.workspace       = true
+async-trait.workspace   = true
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full", "test-util"] }
