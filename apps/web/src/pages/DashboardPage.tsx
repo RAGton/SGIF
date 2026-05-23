@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useAccounts } from "@/hooks/useAccounts";
 
@@ -18,6 +18,11 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gray-950 text-white">
       <header className="border-b border-gray-800 px-6 py-4 flex items-center justify-between">
         <h1 className="text-xl font-bold">SGIF</h1>
+        <nav className="flex items-center gap-6">
+          <Link to="/accounts" className="text-sm text-gray-400 hover:text-white transition">
+            Contas
+          </Link>
+        </nav>
         <div className="flex items-center gap-4">
           <span className="text-gray-400 text-sm">{user?.email}</span>
           <button

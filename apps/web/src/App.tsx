@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 const AuthPage = lazy(() => import("@/pages/AuthPage"));
 const DashboardPage = lazy(() => import("@/pages/DashboardPage"));
+const AccountsPage = lazy(() => import("@/pages/AccountsPage"));
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { session, isLoading } = useAuth();
@@ -29,6 +30,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/accounts"
+          element={
+            <ProtectedRoute>
+              <AccountsPage />
             </ProtectedRoute>
           }
         />
