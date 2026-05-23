@@ -6,7 +6,7 @@ pub fn router(state: AppState) -> Router<AppState> {
     Router::new()
         .route("/accounts", get(accounts::list).post(accounts::create))
         .route(
-            "/accounts/:id",
+            "/accounts/{id}",
             get(accounts::get)
                 .put(accounts::update)
                 .delete(accounts::delete),

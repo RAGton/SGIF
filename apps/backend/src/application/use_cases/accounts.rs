@@ -4,8 +4,8 @@ use crate::application::dtos::{AccountResponse, CreateAccountDto, UpdateAccountD
 use crate::domain::entities::{Account, AccountType};
 use crate::domain::repositories::AccountRepository;
 
-pub async fn create(
-    repo: &dyn AccountRepository,
+pub async fn create<R: AccountRepository>(
+    repo: &R,
     user_id: Uuid,
     dto: CreateAccountDto,
 ) -> anyhow::Result<AccountResponse> {
@@ -35,16 +35,16 @@ pub async fn create(
     Ok(AccountResponse::from(saved))
 }
 
-pub async fn list(
-    repo: &dyn AccountRepository,
+pub async fn list<R: AccountRepository>(
+    repo: &R,
     user_id: Uuid,
 ) -> anyhow::Result<Vec<AccountResponse>> {
     let accounts = repo.list_by_user(user_id).await?;
     Ok(accounts.into_iter().map(AccountResponse::from).collect())
 }
 
-pub async fn get(
-    repo: &dyn AccountRepository,
+pub async fn get<R: AccountRepository>(
+    repo: &R,
     user_id: Uuid,
     id: Uuid,
 ) -> anyhow::Result<Option<AccountResponse>> {
@@ -52,8 +52,8 @@ pub async fn get(
     Ok(account.map(AccountResponse::from))
 }
 
-pub async fn update(
-    repo: &dyn AccountRepository,
+pub async fn update<R: AccountRepository>(
+    repo: &R,
     user_id: Uuid,
     id: Uuid,
     dto: UpdateAccountDto,
@@ -80,8 +80,8 @@ pub async fn update(
     Ok(Some(AccountResponse::from(saved)))
 }
 
-pub async fn delete(
-    repo: &dyn AccountRepository,
+pub async fn delete<R: AccountRepository>(
+    repo: &R,
     user_id: Uuid,
     id: Uuid,
 ) -> anyhow::Result<bool> {

@@ -9,7 +9,7 @@ pub fn router(state: AppState) -> Router<AppState> {
             get(transactions::list).post(transactions::create),
         )
         .route(
-            "/transactions/:id",
+            "/transactions/{id}",
             get(transactions::get).delete(transactions::delete),
         )
         .route_layer(middleware::from_fn_with_state(state, require_auth))

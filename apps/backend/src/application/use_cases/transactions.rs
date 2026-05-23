@@ -5,8 +5,8 @@ use crate::application::dtos::{CreateTransactionDto, TransactionResponse};
 use crate::domain::entities::{Transaction, TransactionType};
 use crate::domain::repositories::TransactionRepository;
 
-pub async fn create(
-    repo: &dyn TransactionRepository,
+pub async fn create<R: TransactionRepository>(
+    repo: &R,
     user_id: Uuid,
     dto: CreateTransactionDto,
 ) -> anyhow::Result<TransactionResponse> {
@@ -34,8 +34,8 @@ pub async fn create(
     Ok(TransactionResponse::from(saved))
 }
 
-pub async fn list(
-    repo: &dyn TransactionRepository,
+pub async fn list<R: TransactionRepository>(
+    repo: &R,
     user_id: Uuid,
     limit: i64,
     offset: i64,
@@ -44,8 +44,8 @@ pub async fn list(
     Ok(txs.into_iter().map(TransactionResponse::from).collect())
 }
 
-pub async fn get(
-    repo: &dyn TransactionRepository,
+pub async fn get<R: TransactionRepository>(
+    repo: &R,
     user_id: Uuid,
     id: Uuid,
 ) -> anyhow::Result<Option<TransactionResponse>> {
@@ -53,8 +53,8 @@ pub async fn get(
     Ok(tx.map(TransactionResponse::from))
 }
 
-pub async fn delete(
-    repo: &dyn TransactionRepository,
+pub async fn delete<R: TransactionRepository>(
+    repo: &R,
     user_id: Uuid,
     id: Uuid,
 ) -> anyhow::Result<bool> {

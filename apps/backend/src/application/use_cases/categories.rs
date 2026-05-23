@@ -4,8 +4,8 @@ use crate::application::dtos::{CategoryResponse, CreateCategoryDto};
 use crate::domain::entities::{Category, CategoryType};
 use crate::domain::repositories::CategoryRepository;
 
-pub async fn create(
-    repo: &dyn CategoryRepository,
+pub async fn create<R: CategoryRepository>(
+    repo: &R,
     user_id: Uuid,
     dto: CreateCategoryDto,
 ) -> anyhow::Result<CategoryResponse> {
@@ -29,16 +29,16 @@ pub async fn create(
     Ok(CategoryResponse::from(saved))
 }
 
-pub async fn list(
-    repo: &dyn CategoryRepository,
+pub async fn list<R: CategoryRepository>(
+    repo: &R,
     user_id: Uuid,
 ) -> anyhow::Result<Vec<CategoryResponse>> {
     let categories = repo.list_by_user(user_id).await?;
     Ok(categories.into_iter().map(CategoryResponse::from).collect())
 }
 
-pub async fn delete(
-    repo: &dyn CategoryRepository,
+pub async fn delete<R: CategoryRepository>(
+    repo: &R,
     user_id: Uuid,
     id: Uuid,
 ) -> anyhow::Result<bool> {
