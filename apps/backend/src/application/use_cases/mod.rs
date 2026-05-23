@@ -1,2 +1,3 @@
-// Application — Use Cases
-// Each use case orchestrates domain logic and delegates I/O to repository traits.
+pub mod accounts;
+pub mod categories;
+pub mod transactions;

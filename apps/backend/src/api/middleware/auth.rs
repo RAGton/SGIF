@@ -1,22 +1,35 @@
-use axum::http::StatusCode;
-use axum::{extract::Request, middleware::Next, response::Response};
+use axum::{
+    extract::{Request, State},
+    http::StatusCode,
+    middleware::Next,
+    response::Response,
+};
+use uuid::Uuid;
 
-/// Validates the JWT from the Authorization header.
-/// Works alongside Supabase's own JWT; verifies signature locally.
-///
-/// TODO: Replace the stub token check with real jsonwebtoken validation.
-pub async fn require_auth(req: Request, next: Next) -> Result<Response, StatusCode> {
+use crate::api::state::AppState;
+
+#[derive(Debug, Clone)]
+pub struct AuthenticatedUser {
+    pub id: Uuid,
+}
+
+pub async fn require_auth(
+    State(state): State<AppState>,
+    mut req: Request,
+    next: Next,
+) -> Result<Response, StatusCode> {
     let token = req
         .headers()
         .get("Authorization")
         .and_then(|v| v.to_str().ok())
-        .and_then(|v| v.strip_prefix("Bearer "));
+        .and_then(|v| v.strip_prefix("Bearer "))
+        .ok_or(StatusCode::UNAUTHORIZED)?;
 
-    match token {
-        Some(_t) => {
-            // TODO: decode & validate JWT claims, inject UserId into extensions
-            Ok(next.run(req).await)
-        }
-        None => Err(StatusCode::UNAUTHORIZED),
-    }
+    let user_id = state.jwt_validator.validate(token).map_err(|e| {
+        tracing::warn!("JWT validation failed: {}", e);
+        StatusCode::UNAUTHORIZED
+    })?;
+
+    req.extensions_mut().insert(AuthenticatedUser { id: user_id });
+    Ok(next.run(req).await)
 }

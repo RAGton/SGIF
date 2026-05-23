@@ -1,2 +1,3 @@
-// API — Handlers
-// Axum handler functions that receive requests and delegate to use cases.
+pub mod accounts;
+pub mod categories;
+pub mod transactions;

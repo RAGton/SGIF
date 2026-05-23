@@ -1,3 +1,7 @@
+pub mod account_repository;
+pub mod category_repository;
+pub mod transaction_repository;
+
 use sqlx::{postgres::PgPoolOptions, PgPool};
 use std::time::Duration;
 

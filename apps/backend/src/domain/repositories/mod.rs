@@ -15,7 +15,6 @@ pub trait AccountRepository: Send + Sync {
 #[async_trait]
 pub trait CategoryRepository: Send + Sync {
     async fn create(&self, category: &Category) -> anyhow::Result<Category>;
-    async fn find_by_id(&self, user_id: Uuid, id: Uuid) -> anyhow::Result<Option<Category>>;
     async fn list_by_user(&self, user_id: Uuid) -> anyhow::Result<Vec<Category>>;
     async fn delete(&self, user_id: Uuid, id: Uuid) -> anyhow::Result<bool>;
 }
