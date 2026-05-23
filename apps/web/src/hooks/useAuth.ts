@@ -3,11 +3,12 @@ import { supabase } from "@/services/supabase";
 import { useAuthStore } from "@/store/authStore";
 
 export function useAuth() {
-  const { session, user, isLoading, setSession } = useAuthStore();
+  const { session, user, isLoading, setSession, setLoading } = useAuthStore();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      setLoading(false);
     });
 
     const {
@@ -17,18 +18,23 @@ export function useAuth() {
     });
 
     return () => subscription.unsubscribe();
-  }, [setSession]);
+  }, [setSession, setLoading]);
 
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+  const signInWithEmail = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUpWithEmail = async (email: string, password: string) => {
     const { error } = await supabase.auth.signUp({ email, password });
+    if (error) throw error;
+  };
+
+  const signInWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin + "/dashboard" },
+    });
     if (error) throw error;
   };
 
@@ -37,5 +43,5 @@ export function useAuth() {
     if (error) throw error;
   };
 
-  return { session, user, isLoading, signIn, signUp, signOut };
+  return { session, user, isLoading, signInWithEmail, signUpWithEmail, signInWithGoogle, signOut };
 }
