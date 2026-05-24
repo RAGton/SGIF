@@ -22,6 +22,12 @@ export default function DashboardPage() {
           <Link to="/accounts" className="text-sm text-gray-400 hover:text-white transition">
             Contas
           </Link>
+          <Link to="/transactions" className="text-sm text-gray-400 hover:text-white transition">
+            Transações
+          </Link>
+          <Link to="/categories" className="text-sm text-gray-400 hover:text-white transition">
+            Categorias
+          </Link>
         </nav>
         <div className="flex items-center gap-4">
           <span className="text-gray-400 text-sm">{user?.email}</span>
