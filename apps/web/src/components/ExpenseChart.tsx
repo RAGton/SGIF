@@ -21,7 +21,7 @@ export function ExpenseChart({ data }: { data: CategorySlice[] }) {
             ))}
           </Pie>
           <Tooltip
-            formatter={(value: number) => [formatBRL(value), ""]}
+            formatter={(value) => [typeof value === "number" ? formatBRL(value) : String(value), ""]}
             contentStyle={{
               background: "#111827",
               border: "1px solid #1F2937",
